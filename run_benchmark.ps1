@@ -1,25 +1,89 @@
-# =============================================================================
-# run_benchmark.ps1 -- Benchmark LM Studio models: reasoning + speed
-#
-# Model list is auto-discovered from LM Studio at startup and written to
-# models_config.json. No manual editing required.
-#
-# Prerequisites:
-#   1. Run .\setup.ps1 once
-#   2. LM Studio must be open with Local Server running on port 1234
-#
-# Usage:
-#   .\run_benchmark.ps1                              # interactive model picker
-#   .\run_benchmark.ps1 -Size small                  # quick run (~20 min/model)
-#   .\run_benchmark.ps1 -ContextLengths 32768        # single context length
-#   .\run_benchmark.ps1 -ContextLengths 32768,65536  # two ctx lengths (default)
-#   .\run_benchmark.ps1 -SpeedOnly                   # skip reasoning eval
-#   .\run_benchmark.ps1 -EvalOnly                    # skip speed test
-#   .\run_benchmark.ps1 -Model "Gemma-4-26B"         # substring match, skip picker
-#
-# If blocked by execution policy:
-#   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-# =============================================================================
+<#
+.SYNOPSIS
+    Benchmark LM Studio models for reasoning ability and generation speed.
+
+.DESCRIPTION
+    Auto-discovers every LLM/VLM currently in LM Studio via its
+    /api/v0/models endpoint, writes models_config.json, lets you pick
+    models interactively (or by substring filter), and for each
+    (model x context-length) combination:
+
+      1. Unloads any resident models (verified via API poll)
+      2. Loads the target model via `lms.exe` with the requested ctx
+      3. Verifies: target loaded, exactly 1 model in memory, actual ctx
+         length matches requested (fails fast if RAM/VRAM was short)
+      4. Runs speed_test.py (tok/s + TTFT, 3 reasoning prompts)
+      5. Runs run_evals.py (ARC / HellaSwag / WinoGrande / GSM8K)
+      6. Saves per-run JSON under results\<model>\ctx_<N>\
+
+    After all runs, regenerates report.txt, results\all_results.json,
+    results\all_results.tsv and results\overview_plot.png.
+
+    A Windows sleep guard (SetThreadExecutionState) is installed in a
+    try/finally so the PC won't sleep mid-run and will always recover
+    normal sleep behaviour on exit.
+
+.PARAMETER Model
+    Substring filter against model name / lms_key / api_id. Empty string
+    (the default) opens an interactive numbered picker.
+
+.PARAMETER Size
+    Suite size. Determines items per task:
+      small  = 20 MC / 8 GSM8K   (~10-30 min/model, +-11% error)
+      medium = 50 MC / 20 GSM8K  (+-7% error) -- default
+      large  = 200 MC / 50 GSM8K (+-3.5% error, multi-hour)
+
+.PARAMETER ContextLengths
+    Comma-separated list of context lengths to test, e.g. "32768,65536".
+    Each model is benchmarked once per context length.
+
+.PARAMETER Tasks
+    Comma-separated reasoning tasks to run. Use a subset (e.g. "gsm8k")
+    to re-run a single task; run_evals.py merges with the existing
+    eval_results.json so previously-completed task scores are preserved.
+
+.PARAMETER SpeedOnly
+    Skip the reasoning eval stage; only measure speed.
+
+.PARAMETER EvalOnly
+    Skip the speed test stage; only run reasoning tasks.
+
+.EXAMPLE
+    .\run_benchmark.ps1
+    Interactive picker, medium suite, both 32K and 64K context (default).
+
+.EXAMPLE
+    .\run_benchmark.ps1 -Size small
+    Quick smoke test across all models, default context lengths.
+
+.EXAMPLE
+    .\run_benchmark.ps1 -Model "Gemma" -Size small -ContextLengths "32768"
+    Benchmark every model whose name contains "Gemma", small suite,
+    32K context only.
+
+.EXAMPLE
+    .\run_benchmark.ps1 -Model "Qwen3.5" -Tasks "gsm8k"
+    Re-run just the GSM8K task for Qwen3.5 (e.g. after fixing the
+    answer extractor). ARC/HellaSwag/WinoGrande scores from the
+    previous run are preserved.
+
+.EXAMPLE
+    .\run_benchmark.ps1 -SpeedOnly
+    Speed-only sweep -- handy for A/B testing hardware or quant levels.
+
+.NOTES
+    Prerequisites:
+      1. Run .\setup.ps1 once to create the venv.
+      2. Open LM Studio -> Developer -> Local Server -> Start (port 1234).
+
+    If blocked by execution policy:
+      Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+    Tested with LM Studio 0.4.9+1 on Windows 11 ARM64 (PowerShell 5.1).
+
+.LINK
+    https://github.com/heuselm/LLMbench_WinArm64
+#>
 
 param(
     [switch]$SpeedOnly,
