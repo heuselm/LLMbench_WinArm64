@@ -168,7 +168,7 @@ function Select-ModelsInteractively([array]$modelList) {
     } | Where-Object { $_ -ne $null }
 
     [array]$selected = $indices | ForEach-Object { $modelList[$_] }
-    Write-Host "  -> Selected: $($selected | ForEach-Object { $_.name } | Join-String -Separator ', ')"
+    Write-Host "  -> Selected: $(($selected | ForEach-Object { $_.name }) -join ', ')"
     return $selected
 }
 
