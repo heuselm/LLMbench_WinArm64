@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Benchmark Dashboard</title>
+    <!-- Dependencies in correct order -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .recharts-cartesian-axis-tick-value { font-family: 'Inter', sans-serif; font-size: 10px; }
+        .custom-file-upload {
+            display: inline-flex; align-items: center; padding: 0.5rem 1rem;
+            cursor: pointer; background: #ffffff; border: 1px solid #e2e8f0;
+            border-radius: 0.5rem; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .custom-file-upload:hover { border-color: #3b82f6; background: #f8fafc; }
+        .metric-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { 
+            LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+            Tooltip, ResponsiveContainer, Cell, LabelList, Legend 
+        } = Recharts;
+
+        const { useState, useMemo } = React;
+
+        const Icons = {
+            Chart: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>,
+            Upload: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>,
+            Help: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        };
+
+        const METRIC_DETAILS = {
+            arc_challenge: { label: 'Reasoning', desc: 'ARC-Challenge: Grade-school science questions requiring reasoning.', unit: '%' },
+            hellaswag: { label: 'Context', desc: 'HellaSwag: Common sense inference in daily scenarios.', unit: '%' },
+            winogrande: { label: 'Logic', desc: 'WinoGrande: Logic/ambiguity resolution based on context.', unit: '%' },
+            gsm8k: { label: 'Math', desc: 'GSM8K: Grade-school multi-step math word problems.', unit: '%' },
+            speed_tps: { label: 'Speed', desc: 'Generation Speed: Throughput measured in tokens per second.', unit: 'avg token/s [gen]' }
+        };
+
+        const formatModelLabel = (name, ctx) => {
+            const ctxStr = ctx.toString();
+            let suffix = ctxStr === "65536" ? "64k" : "32k";
+            const lastHyphenIndex = name.lastIndexOf('-');
+            if (lastHyphenIndex === -1) return `${name}\n(${suffix})`;
+            return `${name.substring(0, lastHyphenIndex)}\n(${name.substring(lastHyphenIndex + 1)}, ${suffix})`;
+        };
+
+        const CustomXAxisTick = ({ x, y, payload }) => {
+            if (!payload || !payload.value) return null;
+            const lines = payload.value.split('\n');
+            return (
+                <g transform={`translate(${x},${y})`}>
+                    {lines.map((line, i) => (
+                        <text key={i} x={0} y={i * 12 - 6} textAnchor="end" fill="#64748b" transform="rotate(-90)" style={{ fontSize: i === 0 ? '9px' : '8px', fontWeight: i === 0 ? 'bold' : 'normal' }}>
+                            {line}
+                        </text>
+                    ))}
+                </g>
+            );
+        };
+
+        const App = () => {
+            const [dataset, setDataset] = useState(null);
+            const [fileName, setFileName] = useState("");
+            const [activeTab, setActiveTab] = useState('overview');
+            const [hiddenTraces, setHiddenTraces] = useState([]);
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        setDataset(JSON.parse(event.target.result));
+                        setFileName(file.name);
+                    } catch (err) { alert("Invalid JSON file."); }
+                };
+                reader.readAsText(file);
+            };
+
+            const toggleTrace = (e) => {
+                const { dataKey } = e;
+                setHiddenTraces(prev => 
+                    prev.includes(dataKey) ? prev.filter(k => k !== dataKey) : [...prev, dataKey]
+                );
+            };
+
+            const { processedData, chartData, stackedTimeData, promptIds } = useMemo(() => {
+                if (!dataset) return { processedData: [], chartData: [], stackedTimeData: [], promptIds: [] };
+                
+                const results = [];
+                const stackedResults = [];
+                const allPromptIds = new Set();
+                const colors = ["#3b82f6", "#8b5cf6", "#10b981", "#f59e0b", "#ec4899", "#ef4444", "#06b6d4"];
+                
+                Object.entries(dataset).forEach(([model, contexts], mIdx) => {
+                    Object.entries(contexts).forEach(([ctx, val]) => {
+                        const formatted = formatModelLabel(model, ctx);
+                        const dataObj = {
+                            id: `${model}_${ctx}`,
+                            model, ctx, formatted,
+                            color: colors[mIdx % colors.length],
+                            tps: val.speed?.avg_tokens_per_sec || 0,
+                            scores: val.scores || {}
+                        };
+                        results.push(dataObj);
+
+                        // Process stacked time data
+                        const stackedObj = { formatted, color: dataObj.color };
+                        (val.speed?.per_prompt || []).forEach(p => {
+                            stackedObj[p.prompt_id] = p.generation_time_s || 0;
+                            allPromptIds.add(p.prompt_id);
+                        });
+                        stackedResults.push(stackedObj);
+                    });
+                });
+
+                const maxTps = Math.max(...results.map(d => d.tps), 1);
+                const chartData = results.map(d => ({
+                    formatted: d.formatted,
+                    speed_tps_raw: d.tps,
+                    speed_tps: (d.tps / maxTps) * 100,
+                    arc_challenge: d.scores.arc_challenge || 0,
+                    hellaswag: d.scores.hellaswag || 0,
+                    winogrande: d.scores.winogrande || 0,
+                    gsm8k: d.scores.gsm8k || 0
+                }));
+
+                return { 
+                    processedData: results, 
+                    chartData, 
+                    stackedTimeData: stackedResults, 
+                    promptIds: Array.from(allPromptIds) 
+                };
+            }, [dataset]);
+
+            const metrics = [
+                { key: 'arc_challenge', color: '#3b82f6', label: 'Reasoning' },
+                { key: 'hellaswag', color: '#ef4444', label: 'Context' },
+                { key: 'winogrande', color: '#10b981', label: 'Logic' },
+                { key: 'gsm8k', color: '#f59e0b', label: 'Math' },
+                { key: 'speed_tps', color: '#ec4899', label: 'Speed' }
+            ];
+
+            const CustomTooltip = ({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                    return (
+                        <div className="bg-white border border-slate-200 p-3 shadow-xl rounded-lg text-xs">
+                            <p className="font-bold border-bottom border-slate-100 mb-2 pb-1 text-slate-800">{label.replace('\n', ' ')}</p>
+                            {payload.map((entry, index) => {
+                                const details = METRIC_DETAILS[entry.dataKey];
+                                const rawVal = entry.dataKey === 'speed_tps' ? payload[0].payload.speed_tps_raw : entry.value;
+                                return (
+                                    <div key={index} className="flex justify-between gap-8 py-0.5" style={{ opacity: hiddenTraces.includes(entry.dataKey) ? 0.3 : 1 }}>
+                                        <span className="flex items-center text-slate-500">
+                                            <span className="metric-dot" style={{ backgroundColor: entry.color }}></span>
+                                            {details?.label || entry.name}:
+                                        </span>
+                                        <span className="font-mono font-bold text-slate-900">
+                                            {typeof rawVal === 'number' ? rawVal.toFixed(1) : rawVal} {details?.unit || ''}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    );
+                }
+                return null;
+            };
+
+            const MetricInfo = () => (
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+                    {Object.entries(METRIC_DETAILS).map(([key, info]) => (
+                        <div key={key} className="group relative bg-white p-3 rounded-lg border border-slate-200 flex flex-col gap-1">
+                            <div className="flex items-center justify-between text-slate-400">
+                                <span className="text-[10px] font-bold uppercase tracking-tight">{info.label}</span>
+                                <Icons.Help />
+                            </div>
+                            <p className="text-[10px] leading-tight text-slate-500 opacity-0 group-hover:opacity-100 absolute inset-0 bg-white/95 p-3 rounded-lg transition-opacity pointer-events-none z-10 border border-slate-300 shadow-sm">
+                                {info.desc}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            );
+
+            return (
+                <div className="max-w-7xl mx-auto p-4 md:p-8">
+                    <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <div className="p-2 bg-slate-900 text-white rounded-lg"><Icons.Chart /></div>
+                                <h1 className="text-2xl font-bold tracking-tight">Model Analysis Suite</h1>
+                            </div>
+                            <p className="text-slate-500 text-sm">{fileName ? `Viewing: ${fileName}` : "Upload all_results.json to begin"}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                            <label className="custom-file-upload text-sm font-semibold">
+                                <input type="file" className="hidden" onChange={handleFileUpload} accept=".json" />
+                                <span className="mr-2 text-slate-400"><Icons.Upload /></span>
+                                Browse JSON
+                            </label>
+                            <div className="bg-white border border-slate-200 p-1 rounded-lg flex shadow-sm">
+                                {['overview', 'speed', 'evaluation'].map(t => (
+                                    <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === t ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-50'}`}>
+                                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </header>
+
+                    {!dataset ? (
+                        <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl py-32 text-center">
+                            <p className="text-slate-400 font-medium">Select a results file from your computer to generate the dashboard.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <MetricInfo />
+                            {activeTab === 'overview' && (
+                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Normalized Performance Overview</h2>
+                                    <div className="h-[500px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={chartData} margin={{ bottom: 80, right: 30 }}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                <XAxis dataKey="formatted" tick={<CustomXAxisTick />} interval={0} height={80} />
+                                                <YAxis domain={[0, 110]} ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]} label={{ value: 'Normalized Score', angle: -90, position: 'insideLeft', style: {fontSize: 12} }} />
+                                                <Tooltip content={<CustomTooltip />} />
+                                                <Legend layout="vertical" align="right" verticalAlign="middle" onClick={toggleTrace} wrapperStyle={{ paddingLeft: '20px' }} />
+                                                {metrics.map(m => (
+                                                    <Line key={m.key} name={m.label} dataKey={m.key} stroke={m.color} hide={hiddenTraces.includes(m.key)} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 7 }} />
+                                                ))}
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'speed' && (
+                                <div className="space-y-6">
+                                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                        <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Generation Throughput (TPS)</h2>
+                                        <div className="h-[400px]">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={processedData} margin={{ bottom: 80 }}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                    <XAxis dataKey="formatted" tick={<CustomXAxisTick />} interval={0} height={80} />
+                                                    <YAxis label={{ value: 'Tokens / Sec', angle: -90, position: 'insideLeft' }} />
+                                                    <Tooltip cursor={{ fill: '#f8fafc' }} formatter={(val) => [`${val.toFixed(2)} tokens/s`, 'Speed']} />
+                                                    <Bar dataKey="tps" radius={[4, 4, 0, 0]} barSize={40}>
+                                                        {processedData.map((entry, index) => (
+                                                            <Cell key={index} fill={entry.color} fillOpacity={entry.ctx.toString() === "65536" ? 1 : 0.6} />
+                                                        ))}
+                                                        <LabelList dataKey="tps" position="top" style={{ fontSize: '10px', fontWeight: 'bold' }} formatter={v => v.toFixed(1)} />
+                                                    </Bar>
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                        <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Generation Time per Prompt (Stacked)</h2>
+                                        <div className="h-[400px]">
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <BarChart data={stackedTimeData} margin={{ bottom: 80 }}>
+                                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                    <XAxis dataKey="formatted" tick={<CustomXAxisTick />} interval={0} height={80} />
+                                                    <YAxis label={{ value: 'Seconds', angle: -90, position: 'insideLeft' }} />
+                                                    <Tooltip formatter={(val) => [`${val.toFixed(2)}s`, 'Time']} />
+                                                    <Legend />
+                                                    {promptIds.map((pid, idx) => {
+                                                        const pColors = ["#6366f1", "#8b5cf6", "#d946ef", "#f43f5e", "#f97316"];
+                                                        return <Bar key={pid} dataKey={pid} stackId="a" fill={pColors[idx % pColors.length]} />;
+                                                    })}
+                                                </BarChart>
+                                            </ResponsiveContainer>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'evaluation' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {metrics.filter(m => m.key !== 'speed_tps').map(metric => (
+                                        <div key={metric.key} className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                            <h3 className="text-xs font-bold text-slate-500 uppercase mb-4">{metric.label} Scores (%)</h3>
+                                            <div className="h-[300px]">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={processedData} margin={{ bottom: 80 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                        <XAxis dataKey="formatted" tick={<CustomXAxisTick />} interval={0} height={80} />
+                                                        <YAxis domain={[0, 100]} />
+                                                        <Tooltip />
+                                                        <Bar dataKey={d => d.scores[metric.key] || 0} fill={metric.color} radius={[2, 2, 0, 0]}>
+                                                            {processedData.map((entry, index) => (
+                                                                <Cell key={index} fill={metric.color} fillOpacity={entry.ctx.toString() === "65536" ? 1 : 0.6} />
+                                                            ))}
+                                                        </Bar>
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

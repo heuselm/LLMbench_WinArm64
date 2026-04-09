@@ -1,0 +1,29 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Benchmark artefacts -- machine-specific, regenerated on every run.
+# We keep the aggregated cross-machine-comparable outputs (all_results.json,
+# all_results.tsv, overview_plot.png, dashboard/) but exclude the raw per-
+# model run directories so your runs don't collide with the reference run
+# shipped in the repo.
+results/*/
+!results/dashboard/
+
+# Auto-generated machine-specific files
+models_config.json
+report.txt

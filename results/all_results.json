@@ -1,0 +1,542 @@
+{
+  "Gemma-4-E4b-It-Q4_K_M": {
+    "32768": {
+      "speed": {
+        "model_id": "gemma-4-e4b-it",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 23.36,
+        "avg_time_to_first_token_s": 2.999,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 15.968,
+            "time_to_first_token_s": 3.089,
+            "generation_time_s": 12.879,
+            "approx_output_tokens": 299,
+            "tokens_per_sec": 23.22,
+            "output_preview": "Here is the step-by-step solution:  **1. Calculate the increase in production rate:**  * The original production rate is 240 widgets per hour. * The e...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 7.077,
+            "time_to_first_token_s": 2.833,
+            "generation_time_s": 4.244,
+            "approx_output_tokens": 112,
+            "tokens_per_sec": 26.39,
+            "output_preview": "The **owner of the green house** drinks coffee.  **Reasoning:**  The problem states: \"The owner of the green house drinks coffee.\" This is a direct st...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 12.802,
+            "time_to_first_token_s": 3.076,
+            "generation_time_s": 9.726,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 20.46,
+            "output_preview": "The code will print **10**.  Here is a step-by-step explanation of why:  ### Code Breakdown  ```python x = [1, 2, 3, 4, 5] result = sum(x[i] for i in ...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 90.0,
+        "hellaswag": 70.0,
+        "winogrande": 65.0,
+        "gsm8k": 100.0
+      }
+    },
+    "65536": {
+      "speed": {
+        "model_id": "gemma-4-e4b-it",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 25.66,
+        "avg_time_to_first_token_s": 2.988,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 15.838,
+            "time_to_first_token_s": 3.124,
+            "generation_time_s": 12.714,
+            "approx_output_tokens": 299,
+            "tokens_per_sec": 23.52,
+            "output_preview": "Here is the step-by-step solution:  **1. Calculate the increase in production rate:**  * The original production rate is 240 widgets per hour. * The e...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 6.692,
+            "time_to_first_token_s": 2.873,
+            "generation_time_s": 3.819,
+            "approx_output_tokens": 112,
+            "tokens_per_sec": 29.32,
+            "output_preview": "The **owner of the green house** drinks coffee.  **Reasoning:**  The problem states: \"The owner of the green house drinks coffee.\" This is a direct st...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 11.212,
+            "time_to_first_token_s": 2.967,
+            "generation_time_s": 8.245,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 24.14,
+            "output_preview": "The code will print **10**.  Here is a step-by-step explanation of why:  ### Code Breakdown  ```python x = [1, 2, 3, 4, 5] result = sum(x[i] for i in ...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 90.0,
+        "hellaswag": 70.0,
+        "winogrande": 65.0,
+        "gsm8k": 100.0
+      }
+    }
+  },
+  "Gemma-4-26b-A4b-It-Q4_K_M": {
+    "32768": {
+      "speed": {
+        "model_id": "gemma-4-26b-a4b-it",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 5.6,
+        "avg_time_to_first_token_s": 14.6,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 71.639,
+            "time_to_first_token_s": 20.075,
+            "generation_time_s": 51.564,
+            "approx_output_tokens": 299,
+            "tokens_per_sec": 5.8,
+            "output_preview": "To find the total number of widgets produced in an 8-hour shift after the efficiency improvement, follow these steps:  ### **Step 1: Calculate the inc...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 24.729,
+            "time_to_first_token_s": 10.935,
+            "generation_time_s": 13.794,
+            "approx_output_tokens": 78,
+            "tokens_per_sec": 5.65,
+            "output_preview": "The owner of the **green house** drinks coffee.  **Reasoning:** The answer is contained directly within the premises provided in the text: *\"The owner...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 50.033,
+            "time_to_first_token_s": 12.789,
+            "generation_time_s": 37.244,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 5.34,
+            "output_preview": "The code prints: **`9`**  ### Step-by-Step Explanation:  **1. The List Initialization** ```python x = [1, 2, 3, 4, 5] ``` A list named `x` is created ...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 65.0,
+        "hellaswag": 45.0,
+        "winogrande": 80.0,
+        "gsm8k": 100.0
+      }
+    }
+  },
+  "DeepSeek-R1-Distill-Qwen-14B-Q4_K_M": {
+    "32768": {
+      "speed": {
+        "model_id": "deepseek-r1-distill-qwen-14b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 9.55,
+        "avg_time_to_first_token_s": 4.798,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 38.355,
+            "time_to_first_token_s": 5.299,
+            "generation_time_s": 33.056,
+            "approx_output_tokens": 297,
+            "tokens_per_sec": 8.98,
+            "output_preview": " First, I need to determine the original production rate of the factory, which is 240 widgets per hour.  Next, there's a 15% increase in efficiency. T...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 25.595,
+            "time_to_first_token_s": 4.441,
+            "generation_time_s": 21.154,
+            "approx_output_tokens": 218,
+            "tokens_per_sec": 10.31,
+            "output_preview": " Okay, so I've got this puzzle here about five houses in a row, each painted a different color. The question says that the green house is immediately ...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 25.801,
+            "time_to_first_token_s": 4.655,
+            "generation_time_s": 21.147,
+            "approx_output_tokens": 198,
+            "tokens_per_sec": 9.36,
+            "output_preview": " Okay, so I have this Python code here that I need to figure out what it prints and why. Let me take a look at the code again.  The code is:  x = [1, ...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 70.0,
+        "winogrande": 70.0,
+        "gsm8k": 100.0
+      }
+    },
+    "65536": {
+      "speed": {
+        "model_id": "deepseek-r1-distill-qwen-14b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 9.79,
+        "avg_time_to_first_token_s": 5.927,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 40.43,
+            "time_to_first_token_s": 8.759,
+            "generation_time_s": 31.671,
+            "approx_output_tokens": 297,
+            "tokens_per_sec": 9.38,
+            "output_preview": " First, I need to determine the original production rate of the factory, which is 240 widgets per hour.  Next, there's a 15% increase in efficiency. T...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 24.474,
+            "time_to_first_token_s": 4.39,
+            "generation_time_s": 20.084,
+            "approx_output_tokens": 218,
+            "tokens_per_sec": 10.85,
+            "output_preview": " Okay, so I've got this puzzle here about five houses in a row, each painted a different color. The question says that the green house is immediately ...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 26.288,
+            "time_to_first_token_s": 4.631,
+            "generation_time_s": 21.657,
+            "approx_output_tokens": 198,
+            "tokens_per_sec": 9.14,
+            "output_preview": " Okay, so I have this Python code here that I need to figure out what it prints and why. Let me take a look at the code again.  The code is:  x = [1, ...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 70.0,
+        "winogrande": 70.0,
+        "gsm8k": 100.0
+      }
+    }
+  },
+  "Qwen3.5-9B-Uncensored-HauhauCS-Q8_0": {
+    "32768": {
+      "speed": {
+        "model_id": "qwen3.5-9b-uncensored-hauhaucs-aggressive",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 10.95,
+        "avg_time_to_first_token_s": 3.435,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 31.047,
+            "time_to_first_token_s": 3.581,
+            "generation_time_s": 27.467,
+            "approx_output_tokens": 299,
+            "tokens_per_sec": 10.89,
+            "output_preview": "Here's my thought process for solving this problem:  1.  **Analyze the Request:**     *   **Given:** A factory produces 240 widgets per hour (original...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 21.395,
+            "time_to_first_token_s": 3.268,
+            "generation_time_s": 18.127,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 10.98,
+            "output_preview": "Here's a thinking process that leads to the solution:  1.  **Analyze the Request:**     *   There are 5 houses in a row (let's number them 1, 2, 3, 4,...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 21.595,
+            "time_to_first_token_s": 3.455,
+            "generation_time_s": 18.14,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 10.97,
+            "output_preview": "Here's a thinking process that leads to the explanation:  1.  **Analyze the Request:**     *   Input: A specific Python code snippet.     *   Task: De...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 100.0,
+        "hellaswag": 80.0,
+        "winogrande": 70.0,
+        "gsm8k": 62.5
+      }
+    },
+    "65536": {
+      "speed": {
+        "model_id": "qwen3.5-9b-uncensored-hauhaucs-aggressive",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 10.81,
+        "avg_time_to_first_token_s": 3.405,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 31.581,
+            "time_to_first_token_s": 3.47,
+            "generation_time_s": 28.112,
+            "approx_output_tokens": 299,
+            "tokens_per_sec": 10.64,
+            "output_preview": "Here's my thought process for solving this problem:  1.  **Analyze the Request:**     *   **Given:** A factory produces 240 widgets per hour (original...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 21.249,
+            "time_to_first_token_s": 3.311,
+            "generation_time_s": 17.938,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 11.09,
+            "output_preview": "Here's a thinking process that leads to the solution:  1.  **Analyze the Request:**     *   There are 5 houses in a row (let's number them 1, 2, 3, 4,...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 22.056,
+            "time_to_first_token_s": 3.435,
+            "generation_time_s": 18.621,
+            "approx_output_tokens": 199,
+            "tokens_per_sec": 10.69,
+            "output_preview": "Here's a thinking process that leads to the explanation:  1.  **Analyze the Request:**     *   Input: A specific Python code snippet.     *   Task: De...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 100.0,
+        "hellaswag": 80.0,
+        "winogrande": 70.0,
+        "gsm8k": 62.5
+      }
+    }
+  },
+  "DeepSeek-R1-0528-Qwen3-8B-Q4_K_M": {
+    "32768": {
+      "speed": {
+        "model_id": "deepseek/deepseek-r1-0528-qwen3-8b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 17.99,
+        "avg_time_to_first_token_s": 3.443,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 21.533,
+            "time_to_first_token_s": 3.725,
+            "generation_time_s": 17.808,
+            "approx_output_tokens": 298,
+            "tokens_per_sec": 16.73,
+            "output_preview": " I need to solve this problem: A factory produces 240 widgets per hour. After a 15% efficiency improvement, how many widgets does it produce in an 8-h...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 14.778,
+            "time_to_first_token_s": 3.215,
+            "generation_time_s": 11.564,
+            "approx_output_tokens": 232,
+            "tokens_per_sec": 20.06,
+            "output_preview": " First, the problem states: \"There are 5 houses in a row, each painted a different color. The green house is immediately to the left of the white hous...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 14.906,
+            "time_to_first_token_s": 3.39,
+            "generation_time_s": 11.516,
+            "approx_output_tokens": 198,
+            "tokens_per_sec": 17.19,
+            "output_preview": " We are given a list `x` with elements [1, 2, 3, 4, 5].  Then we have:     result = sum(x[i] for i in range(0, len(x), 2))   Let's break down the gene...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 75.0,
+        "winogrande": 60.0,
+        "gsm8k": 50.0
+      }
+    },
+    "65536": {
+      "speed": {
+        "model_id": "deepseek/deepseek-r1-0528-qwen3-8b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 18.03,
+        "avg_time_to_first_token_s": 3.388,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 21.216,
+            "time_to_first_token_s": 3.53,
+            "generation_time_s": 17.686,
+            "approx_output_tokens": 298,
+            "tokens_per_sec": 16.85,
+            "output_preview": " I need to solve this problem: A factory produces 240 widgets per hour. After a 15% efficiency improvement, how many widgets does it produce in an 8-h...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 14.776,
+            "time_to_first_token_s": 3.215,
+            "generation_time_s": 11.561,
+            "approx_output_tokens": 232,
+            "tokens_per_sec": 20.07,
+            "output_preview": " First, the problem states: \"There are 5 houses in a row, each painted a different color. The green house is immediately to the left of the white hous...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 14.949,
+            "time_to_first_token_s": 3.42,
+            "generation_time_s": 11.529,
+            "approx_output_tokens": 198,
+            "tokens_per_sec": 17.17,
+            "output_preview": " We are given a list `x` with elements [1, 2, 3, 4, 5].  Then we have:     result = sum(x[i] for i in range(0, len(x), 2))   Let's break down the gene...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 75.0,
+        "winogrande": 60.0,
+        "gsm8k": 50.0
+      }
+    }
+  },
+  "GPT-OSS-20B-MXFP4": {
+    "32768": {
+      "speed": {
+        "model_id": "openai/gpt-oss-20b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 20.33,
+        "avg_time_to_first_token_s": 4.783,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 17.112,
+            "time_to_first_token_s": 5.417,
+            "generation_time_s": 11.695,
+            "approx_output_tokens": 236,
+            "tokens_per_sec": 20.18,
+            "output_preview": "**Step\u2011by\u2011step solution**  1. **Original production rate**      The factory makes      \\[    240\\text{ widgets per hour}    \\]  2. **Efficiency improv...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 10.879,
+            "time_to_first_token_s": 4.184,
+            "generation_time_s": 6.696,
+            "approx_output_tokens": 160,
+            "tokens_per_sec": 23.9,
+            "output_preview": "The puzzle gives us only two facts:  1. **\u201cThe green house is immediately to the left of the white house.\u201d**      So in the row, a green\u2011painted house...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 13.859,
+            "time_to_first_token_s": 4.747,
+            "generation_time_s": 9.112,
+            "approx_output_tokens": 154,
+            "tokens_per_sec": 16.9,
+            "output_preview": "**What it prints**  ``` 9 ```  ---  ### Step\u2011by\u2011step explanation  ```python x = [1, 2, 3, 4, 5] result = sum(x[i] for i in range(0, len(x), 2)) print(...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 20.0,
+        "winogrande": 45.0,
+        "gsm8k": 100.0
+      }
+    },
+    "65536": {
+      "speed": {
+        "model_id": "openai/gpt-oss-20b",
+        "base_url": "http://localhost:1234/v1",
+        "avg_tokens_per_sec": 22.19,
+        "avg_time_to_first_token_s": 10.876,
+        "num_prompts": 3,
+        "num_successful": 3,
+        "per_prompt": [
+          {
+            "prompt_id": "math_reasoning",
+            "total_time_s": 35.283,
+            "time_to_first_token_s": 23.734,
+            "generation_time_s": 11.549,
+            "approx_output_tokens": 236,
+            "tokens_per_sec": 20.43,
+            "output_preview": "**Step\u2011by\u2011step solution**  1. **Original production rate**      The factory makes      \\[    240\\text{ widgets per hour}    \\]  2. **Efficiency improv...",
+            "error": null
+          },
+          {
+            "prompt_id": "logic_puzzle",
+            "total_time_s": 11.045,
+            "time_to_first_token_s": 4.361,
+            "generation_time_s": 6.685,
+            "approx_output_tokens": 160,
+            "tokens_per_sec": 23.94,
+            "output_preview": "The puzzle gives us only two facts:  1. **\u201cThe green house is immediately to the left of the white house.\u201d**      So in the row, a green\u2011painted house...",
+            "error": null
+          },
+          {
+            "prompt_id": "code_reasoning",
+            "total_time_s": 11.469,
+            "time_to_first_token_s": 4.534,
+            "generation_time_s": 6.934,
+            "approx_output_tokens": 154,
+            "tokens_per_sec": 22.21,
+            "output_preview": "**What it prints**  ``` 9 ```  ---  ### Step\u2011by\u2011step explanation  ```python x = [1, 2, 3, 4, 5] result = sum(x[i] for i in range(0, len(x), 2)) print(...",
+            "error": null
+          }
+        ]
+      },
+      "scores": {
+        "arc_challenge": 85.0,
+        "hellaswag": 20.0,
+        "winogrande": 45.0,
+        "gsm8k": 100.0
+      }
+    }
+  }
+}
